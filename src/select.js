@@ -1,10 +1,18 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Dimensions, Platform, TouchableWithoutFeedback } from 'react-native';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  Platform,
+  TouchableWithoutFeedback
+} from "react-native";
 
-import Caret from './caret';
-import List from './list';
+import Caret from "./caret";
+import List from "./list";
 
-const window = Dimensions.get('window');
+const window = Dimensions.get("window");
 
 class Select extends Component {
   constructor(props) {
@@ -21,8 +29,8 @@ class Select extends Component {
     this.state = {
       value: defaultValue,
       visible: 0,
-      listHeight: 0,
-    }
+      listHeight: 0
+    };
   }
 
   // measureProps() {
@@ -41,27 +49,27 @@ class Select extends Component {
   onOptionPressed(value, text) {
     this.setState({
       visible: false,
-      value: text,
+      value: text
     });
 
     this.props.onSelect(value, text);
   }
 
   toggleVisibility() {
-    this.setState({visible: this.state.visible ? 0 : 1});
+    this.setState({ visible: this.state.visible ? 0 : 1 });
   }
 
   render() {
     const { padding, caret } = this.props;
 
-    let offset = 2*padding;
+    let offset = 2 * padding;
 
     if (caret) {
-      if (typeof(caret) !== "string") {
+      if (typeof caret !== "string") {
         try {
           offset += caret.props.style.width;
-        } catch(error) {
-          console.error('Add style with width and height to caret image.');
+        } catch (error) {
+          console.error("Add style with width and height to caret image.");
         }
       } else {
         offset += 15;
@@ -70,76 +78,93 @@ class Select extends Component {
 
     return (
       <View
-        style={[styles.container, {zIndex: this.props.zIndex + this.state.visible, paddingBottom: this.state.visible && Platform.OS === 'android' ? this.props.listHeight : 0}]}>
-        <TouchableWithoutFeedback
-          onPress={this.toggleVisibility.bind(this)}
-          >
+        style={[
+          styles.container,
+          {
+            zIndex: this.props.zIndex + this.state.visible,
+            paddingBottom:
+              this.state.visible && Platform.OS === "android"
+                ? this.props.listHeight
+                : 0
+          }
+        ]}
+      >
+        <TouchableWithoutFeedback onPress={this.toggleVisibility.bind(this)}>
           <View
-            ref={(view) => { this.select = view; }}
-            style={[styles.select, this.props.selectStyle, {paddingHorizontal: padding}]}
-            >
+            ref={view => {
+              this.select = view;
+            }}
+            style={[
+              styles.select,
+              this.props.selectStyle,
+              { paddingHorizontal: padding }
+            ]}
+          >
             <Text
-              style={[this.props.selectTextStyle, {width: 222 - offset}]}
+              style={[this.props.selectTextStyle, { width: 222 - offset }]}
               numberOfLines={1}
-              lineBreakMode='tail'
-            >{ this.state.value }</Text>
-            <Caret element={caret} size={this.props.caretSize} color={this.props.caretColor} />
+              lineBreakMode="tail"
+            >
+              {this.state.value}
+            </Text>
+            <Caret
+              element={caret}
+              size={this.props.caretSize}
+              color={this.props.caretColor}
+            />
           </View>
         </TouchableWithoutFeedback>
-        {
-          this.state.visible ?
-            <List
-              style={this.props.listStyle}
-              select={this.select}
-              height={this.props.listHeight}
-              position={this.props.listPosition}
-              onOverlayPress={this.toggleVisibility.bind(this)}
-              onOptionPressed={this.onOptionPressed}
-              >
-              { this.props.children }
-            </List>
-            :
-            null
-        }
-        </View>
+        {this.state.visible ? (
+          <List
+            style={this.props.listStyle}
+            select={this.select}
+            height={this.props.listHeight}
+            position={this.props.listPosition}
+            onOverlayPress={this.toggleVisibility.bind(this)}
+            onOptionPressed={this.onOptionPressed}
+          >
+            {this.props.children}
+          </List>
+        ) : null}
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch"
   },
   select: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'stretch',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "stretch",
     height: 40,
-    backgroundColor: '#efefef',
-    borderRadius: 2,
+    backgroundColor: "#efefef",
+    borderRadius: 2
   },
   labelContainer: {
-    justifyContent: 'center',
+    justifyContent: "center",
     height: 25,
-    backgroundColor: 'transparent',
-  },
+    backgroundColor: "transparent"
+  }
 });
 
 Select.propTypes = {
-  listHeight: React.PropTypes.number,
-  listPosition: React.PropTypes.oneOf(['down', 'up']),
-  padding: React.PropTypes.number,
-  zIndex: React.PropTypes.number,
-  onSelect: React.PropTypes.func
+  listHeight: PropTypes.number,
+  listPosition: PropTypes.oneOf(["down", "up"]),
+  padding: PropTypes.number,
+  zIndex: PropTypes.number,
+  onSelect: PropTypes.func
 };
 
 Select.defaultProps = {
   listHeight: 100,
-  listPosition: 'down',
+  listPosition: "down",
   padding: 10,
   zIndex: 999,
-  onSelect: () => { }
+  onSelect: () => {}
 };
 
 module.exports = Select;
